@@ -1,0 +1,31 @@
+:root {
+    --color: rgba(255, 255, 255, 0.9);
+    --tweet: white;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+::placeholder {
+    color: var(--color) !important;
+}
+
+.hidden {
+    visibility: hidden;
+    opacity: 0.8;
+}
+
+body {
+    display: flex;
+    flex-direction: row;
+    flex-flow: wrap;
+    align-items: center;
+    justify-content: center;
+    width: 100vw;
+    height: 100vh;
+    background-color: #28a745;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
+}
