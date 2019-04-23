@@ -1,17 +1,60 @@
-// (function() {
-//     document.addEventListener('DOMContentLoaded', addListener);
-// }());
+var onlineEventListener;
+var offlineEventListener;
+(function() {
+    document.addEventListener('DOMContentLoaded', addListener);
+}());
 
-// function addListener() {
-//     var hex = document.querySelector('#hexCode');
-//     var rgb = document.querySelector('#rgbValue');
-//     hex.addEventListener('input', (ev) => {
-//         console.log('input from hex code', ev.type, ev.currentTarget, ev.target);
-//     }, false);
-//     rgb.addEventListener('input', (ev) => {
-//         console.log('input from rgb value', ev.type, ev.currentTarget);
-//     });
-// }
+function addListener() {
+    // window.addEventListener('online', function online() {
+    //     console.log('i am online');
+    // });
+    // window.addEventListener('offline', function offline() {
+    //     console.log('i am offline');
+    // });
+    onlineEventListener = rxjs.fromEvent(window, 'online').pipe(
+        rxjs.operators.switchMap(() => {
+            // const networkResult = await fetch('https://httpbin.org/');
+            // console.log('network result', networkResult);
+            // if (networkResult.ok) {
+            //     return true;
+            // } else {
+            //     return false;
+            // }
+            return covertPromiseToObservable().pipe(rxjs.operators.catchError((error) => {
+                console.log('error in fetch', error);
+                return rxjs.of({
+                    ok: false
+                });
+            }))
+        }),
+        rxjs.operators.map((network) => {
+            console.log("network", network);
+            // if (network !== 'error') {
+            if (network.ok) {
+                return true
+            } else {
+                return false;
+            }
+            // } else {
+            //     return false;
+            // }
+        })
+    )
+    offlineEventListener = rxjs.fromEvent(window, 'offline').pipe(
+        rxjs.operators.map(() => 'you are offline')
+    )
+    onlineEventListener.subscribe((value) => {
+        // if (value) {
+        //     console.log('i am online');
+        // } else {
+        //     console.log('you are online, but not really online');
+        // }
+        console.log("online", value);
+    });
+    offlineEventListener.subscribe(function(value) {
+        console.log(value);
+    });
+}
 var hex = document.querySelector('#hex');
 var rgb = document.querySelector('#rgb');
 
@@ -138,3 +181,7 @@ rgb.addEventListener('keyup', function() {
 document.addEventListener('keyup', function() {
     errorMark();
 })
+
+function covertPromiseToObservable() {
+    return rxjs.from(fetch('https://httpbin.org/'));
+}
